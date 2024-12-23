@@ -1,0 +1,77 @@
+{% block body %}
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+    hr {
+        display: block;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+        margin-left: auto;
+        margin-right: auto;
+        border-style: inset;
+        border-width: 4px;
+    }  
+</style>
+
+</head>
+
+<br/>
+<center>
+<div class="all-posts mx-5"><h1><i>{{ username }}</i></h1>
+</cemter>
+    <hr>
+<br/>
+
+<div class="container">
+    <div class="row d-flex justify-content-left">
+        <h4 class="col-4">Followers: {{ followers.count }}</h4>
+        <h4 class="col-4">Following: {{ following.count }}</h4>
+        {% if user.is_authenticated %}
+            {% if user != user_profile %}
+                {% if isFollowing %}
+                <form action="{% url 'unfollow' %}" method="post">
+                    {% csrf_token %}
+                    <input type= "hidden" name= "userfollow" value="{{ user_profile }}">
+                    <input type="submit" value="Unfollow">
+                </form>
+                <hr>
+            {% else %}
+                <form action="{% url 'follow' %}" method="post"></form>
+                    {% csrf_token %}
+                    <input type= "hidden" name= "userunfollow" value= "{{ user_profile }}">
+                    <input type="submit" value="Follow">
+                </form>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+<h5>
+    <div class="mx-4 my-4">
+        {% for post in posts_of_the_page %}
+        <div class="row post">
+        
+            <h5 class="username"><a href ="{% url 'profile' user_id=post.user.id %}">@{{ post.user }}</a></h5>
+            
+            <h5 class="content">{{ post.content }}</h5>
+            
+            <h6><p class="date">{{ post.date }}</p></h6>    
+        </div>
+        {% endfor %}
+    </div>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination d-flex justify-content-center">
+            {% if posts_of_the_page.has_previous %}
+                <li class="page-item"> <a class="btn btn-primary" href="?page={{posts_of_the_page.previous_page_number}}">Previous</a></li>
+            {% endif %}
+            {% if posts_of_the_page.has_next %}
+            <li class="page-item"><a class="btn btn-primary" href="?page={{posts_of_the_page.next_page_number}}">Next</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+{% endif %}
+{% endblock %}
